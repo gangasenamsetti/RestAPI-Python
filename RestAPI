@@ -14,8 +14,10 @@ FASTAPI
  pip3 install uvicorn
 
 *hello world program
+*The first step in creating a FastAPI app is to declare the application object of FastAPI class.
+*This app object is the main point of interaction of the application with the client browser. 
 *create a venv and create new folder(hello.py) and insert this code
-*To run the code -> uvicorn hello:app --reload
+*To run the server -> uvicorn hello:app --reload
 from fastapi import FastAPI
 app=FastAPI()
 
