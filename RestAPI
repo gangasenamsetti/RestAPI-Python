@@ -1,0 +1,24 @@
+RESTAPI
+*A REST API (Representational State Transfer API) enables communication between client and server over HTTP. It exchanges data typically in JSON format using standard web protocols.
+*Uses HTTP methods like GET, POST, PUT, PATCH, and DELETE.
+Client sends requests to server endpoints (URLs).
+Server returns responses such as JSON, XML, HTML, or images.
+Maps HTTP methods to CRUD operations (Create, Read, Update, Delete).
+*In REST architecture, the main HTTP methods are GET, POST, PUT, PATCH, and DELETE, which map to CRUD operations. Other less commonly used methods include HEAD and OPTIONS.
+
+FASTAPI
+*FastAPI is a modern Python web framework, very efficient in building APIs. It is based on Pythons type hints feature that has been added since Python 3.6 onwards.
+*To install FastAPI (preferably in a virtual environment), use pip3 installer.
+  pip3 install fastapi
+*FastAPI doesnt come with any built-in server application. To run FastAPI app, you need an ASGI(Asynchronous Server Gateway Interface) server called uvicorn
+ pip3 install uvicorn
+
+*hello world program
+*create a venv and create new folder(hello.py) and insert this code
+*To run the code -> uvicorn hello:app --reload
+from fastapi import FastAPI
+app=FastAPI()
+
+@app.get("/")
+async def hello():
+    return {"hello":"world"}
