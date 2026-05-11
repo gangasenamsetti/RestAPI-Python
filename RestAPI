@@ -16,6 +16,7 @@ FASTAPI
 *hello world program
 *The first step in creating a FastAPI app is to declare the application object of FastAPI class.
 *This app object is the main point of interaction of the application with the client browser. 
+*The async keyword in the functions definition tells FastAPI that it is to be run asynchronously
 *create a venv and create new folder(hello.py) and insert this code
 *To run the server -> uvicorn hello:app --reload
 from fastapi import FastAPI
@@ -24,3 +25,70 @@ app=FastAPI()
 @app.get("/")
 async def hello():
     return {"hello":"world"}
+
+UVICORN
+* if we want to run server in code itself without running in cmd as uvicorn main:app --reload we should give following code
+from fastapi import FastAPI
+app=FastAPI()
+@app.get("/")
+async def mobile(color:str,type:str):
+   return {"color": color, "type":type}
+
+if __name__ == "__main__":
+   uvicorn.run("hello:app", host="127.0.0.1", port=8000, reload=True)
+
+
+OPEN AI DOCUMENTATION:
+* http://127.0.0.1:8000/docs generates automatic documentation with help of openai
+* FastAPI also supports another automatic documentation method provided by Redoc
+
+TYPE HINTS
+* Pythons new type hinting feature helps in prompting the user with the expected type of the parameters to be passed. This is done by adding a colon and data type after the parameter. 
+async def helloo(name:str,age:int):
+   return {"name": "hello"+" "+name,"age": "age"}
+
+PATH PARAMETERS:
+eXAMPLE:
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def index():
+   return {"message": "Hello World"}
+
+@app.get("/hello/{name}")
+async def hello(name):
+   return {"name": name}
+-> Start the Uvicorn server and visit http://localhost:8000/hello/Tutorialspoint URL. The browser shows the following JSON response.
+  {"name":"Tutorialspoint"}
+-> check openAI documentation by http://localhost:8000/docs
+
+Example:
+@app.get("/world/{name}/{age}")
+async def helloo(name:str,age:int):
+   return {"name": "hello"+" "+name,"age": "age"}
+*we have search the path as  -> http://127.0.0.1:8000/world/ganga/12 
+* Ensure if we are giving parameters(name,age) should be in {} and then only we can get corresponding value we should pass in link 
+
+QUERY PARAMETER:
+*query parameters are values passed after ? in the URL.
+*Query Parameters These appear after a ? in the URL and are used for filtering, sorting, searching, or pagination. They are optional and do not change the identity of the resource. Example:
+    GET /cars?color=blue&brand=ferrari
+
+PARAMETER VALIDATION
+*It is possible to apply validation conditions on path parameters as well as query parameters of the URL
+*In order to apply the validation conditions on a path parameter, you need to import the Path class. In addition to the default value of the parameter, you can specify the maximum and minimum length in the case of a string parameter.
+from fastapi import FastAPI,Path
+import uvicorn
+
+app=FastAPI()
+
+@app.get("/validation/{name}")
+async def fun(name:str=Path(...,min_length=3,max_length=10)):
+    return {"name":name}
+
+if __name__ == "__main__":
+   uvicorn.run("parameter_validation:app", host="127.0.0.1", port=8080, reload=True)
+
+
