@@ -149,7 +149,7 @@ class Profile(BaseModel):
     name: str = Field(..., min_length=1, max_length=10)
     technology: str
 
-@app.get("/profile")
+@app.get("/profile/{name}/{technology")
 async def get_details(name: str, technology: str):
     return {
         "name": name,
@@ -158,6 +158,41 @@ async def get_details(name: str, technology: str):
 
 if __name__ == "__main__":
     uvicorn.run("pydantic_basic:app",host="127.0.0.1",port=8080,reload=True)
+
+* you can use the following query parameter url to access -> http://127.0.0.1:8080/profile?name=John&technology=Python  or
+* If you are accessing only http://127.0.0.1:8080/profile ->you will get error because there are 2 parameters and we need to pass them also
+
+Request Body
+*To use pydantic model object as request body we need to use POST operation
+* we can access this model object as request body only with docs not with URL
+
+from fastapi import FastAPI
+import uvicorn
+from pydantic import BaseModel, Field
+
+app = FastAPI()
+
+class Profile(BaseModel):
+    name: str = Field(..., min_length=1, max_length=10)
+    technology: str
+
+@app.get("/profile")
+async def get_details(name: str, technology: str):
+    return {
+        "name": name,
+        "technology": technology
+    }
+
+@app.post("/profile")
+async def post_details(p:Profile):
+    return p
+
+if __name__ == "__main__":
+    uvicorn.run("pydantic_basic:app",host="127.0.0.1",port=8080,reload=True)
+
+
+  
+
 
 
 
