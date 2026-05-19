@@ -162,9 +162,36 @@ if __name__ == "__main__":
 * you can use the following query parameter url to access -> http://127.0.0.1:8080/profile?name=John&technology=Python  or
 * If you are accessing only http://127.0.0.1:8080/profile ->you will get error because there are 2 parameters and we need to pass them also
 
-Request Body
+
+BASE MODEL (Base class)
 *To use pydantic model object as request body we need to use POST operation
 * we can access this model object as request body only with docs not with URL
+example:
+from fastapi import FastAPI
+import uvicorn
+from pydantic import BaseModel, Field
+
+app = FastAPI()
+
+class Profile(BaseModel):
+    name: str = Field(..., min_length=1, max_length=10)
+    technology: str
+
+@app.get("/profile")
+async def get_details(name: str, technology: str):
+    return {
+        "name": name,
+        "technology": technology
+    }
+
+@app.post("/profile")
+async def post_details(p:Profile):
+    return p
+
+if __name__ == "__main__":
+    uvicorn.run("pydantic_basic:app",host="127.0.0.1",port=8080,reload=True)
+
+
 
 from fastapi import FastAPI
 import uvicorn
@@ -189,6 +216,145 @@ async def post_details(p:Profile):
 
 if __name__ == "__main__":
     uvicorn.run("pydantic_basic:app",host="127.0.0.1",port=8080,reload=True)
+
+BODY CLASS
+*Body class is used get one or two values from the JSON body
+*body class is used with post function because we are validating something by passing request body
+ rom fastapi import FastAPI,Body
+import uvicorn
+
+app=FastAPI()
+
+@app.post("/items/")
+
+async def fun(price:int=Body(...,gt=0)):
+    return {"price":price}
+
+if __name__ == "__main__":
+    uvicorn.run("body_class:app",host="127.0.0.1",port=8080,reload=True)
+
+CRUD OPERATIONS:
+*The REST architecture uses HTTP verbs or methods for the operation on the resources. The POST, GET, PUT and DELETE methods perform respectively CREATE, READ, UPDATE and DELETE operations respectively.
+Example:
+from fastapi import FastAPI
+import uvicorn
+from pydantic import BaseModel
+
+app = FastAPI()
+
+data = []
+
+class Books(BaseModel):
+    id: int
+    author: str
+    price: int
+
+@app.post("/books")
+async def post_details(b: Books):
+    data.append(b.model_dump())
+    return data
+
+@app.get("/books")
+async def get_details(id:int):
+    return data[id-1]
+
+@app.put("/books")
+async def modify_details(id:int,b:Books):
+    data[id-1] = b
+    return data
+
+@app.delete("/books")
+async def delete_details(id:int):
+    data.pop(id-1)
+    return data
+if __name__ == "__main__":
+    uvicorn.run("crud_operations:app", host="127.0.0.1", port=8080, reload=True)
+
+SQL ALCHEMY
+*a Python list(for temporary storage- refresh the swagger everything will be deleted) has been used as an in-memory database to perform CRUD operations using FastAPI. Instead, we can use any relational database (such as MySQL, Oracle, etc.) to perform store, retrieve, update and delete operations.
+*SQLAlchemy as an interface between Python code and a database (we are going to use SQLite database as Python has in-built support for it)
+*SQLAlchemy is a popular Python library used for working with databases. It sits between your Python code and a database (like MySQL, PostgreSQL, or SQLite)
+*It belongs to the broader field of Object-Relational Mapping (ORM), which maps database tables to Python classes.
+
+What SQLAlchemy Does
+
+Instead of writing raw SQL queries everywhere, SQLAlchemy lets you:
+Define database tables as Python classes
+rows as objects
+Query data using Python code
+Insert, update, and delete records easily
+Still use raw SQL if you want full control
+*ORM (Object Relational Mapper)
+Higher-level, more Pythonic
+Tables → classes, rows → objects
+Gives flexibility: high-level ORM and low-level SQL
+
+Postgresql
+*First install sqlachemy -> pip install sqlalchemy
+*Next install necessary driver for ur database. For postgresql it is psycopg2. so install both at once
+ pip install sqlalchemy psycopg2
+
+Database connection
+*we need to create a database engine for our database. Import create_engine() function from sqlalchemy module.
+ from sqlalchemy import create_engine
+*In order to interact with the database, we need to obtain its handle. A session object is the handle to database. Session class is defined using sessionmaker() − a configurable session factory method which is bound to the engine object.
+  from sqlalchemy.orm import sessionmaker, Session
+  session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+*autocommit,autoflush and bind are arugumenents for sessionmaker
+*bind -> Connects the session to a database engine.
+*For creation of engine it takes db username,password and host url and that can represented as 
+      from sqlalchemy.orm import sessionmaker
+      from sqlalchemy import create_engine
+      
+      #user_name:password@localjost:5432
+      db_url="postgresql://postgres:postgres@localhost:5432/students_new_db"
+      engine=create_engine(db_url)
+      sessionmaker=sessionmaker(autocommit=False,autoflush=False,bind=engine)
+*for postgresql host number is 5432
+
+*After importing all neccessary things for  db connection we need to create model for DB so that it maps as table
+*creation of model for DB is similar to creation of model in fastapi(such as class with BaseModel paramater) but there are few changes such as 
+ 1. import declaraive base  
+    base=declarative_base()
+ 2. inplace of BaseModel we have to give "base" and instead of ": type(int)" we need to give it as "=Column(type)" and here we can mention primary and foriegn keys also after the type and import neccesary types from sqlalchemy
+    base=declarative_base()
+    Base=declarative_base()
+    class Products(Base):
+        __tablename__="products"
+        id=Column(Integer,primary_key=True)
+        price=Column(Integer)
+        quantity=Column(Integer)
+3. Then we need to map the table to postgres so use the following one:
+   Base.metadata.create_all(bind=engine)
+
+complete code:
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy import Column,Integer,Float,String
+
+#user_name:password@localjost:5432
+#create database products by right click on postgres/Databases
+db_url="postgresql://postgres:postgres@localhost:5432/products"
+engine=create_engine(db_url)
+sessionmaker=sessionmaker(autocommit=False,autoflush=False,bind=engine)
+
+from sqlalchemy.ext.declarative import declarative_base
+Base=declarative_base()
+class Products(Base):
+    __tablename__="products"
+    id=Column(Integer,primary_key=True)
+    price=Column(Integer)
+    quantity=Column(Integer)
+
+Base.metadata.create_all(bind=engine)
+
+START SERVER
+1.  cd "C:\Program Files\PostgreSQL\17\bin"
+2.  pg_ctl -D "C:\Program Files\PostgreSQL\17\data" start   -> THEN SERVER WILL BE STARTED
+3. create database databasename(products as mentioned in code) by right click on postgres/Databases
+4. Then open postgres/products/schemas/Tables/products ->this will reflect the table with columns
+
+
 
 
   
