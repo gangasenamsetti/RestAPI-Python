@@ -1,3 +1,6 @@
+https://www.tutorialspoint.com/fastapi/index.htm  -> website to visit for reference
+telusko - youtube channel for refernce for postgresql with fastapi
+
 RESTAPI
 *A REST API (Representational State Transfer API) enables communication between client and server over HTTP. It exchanges data typically in JSON format using standard web protocols.
 *Uses HTTP methods like GET, POST, PUT, PATCH, and DELETE.
