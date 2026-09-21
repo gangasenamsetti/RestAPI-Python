@@ -11,10 +11,30 @@ Maps HTTP methods to CRUD operations (Create, Read, Update, Delete).
 
 FASTAPI
 *FastAPI is a modern Python web framework, very efficient in building APIs. It is based on Pythons type hints feature that has been added since Python 3.6 onwards.
+*It supports asynchronous programming and automatically generates OpenAPI documentation.
 *To install FastAPI (preferably in a virtual environment), use pip3 installer.
   pip3 install fastapi
 *FastAPI doesnt come with any built-in server application. To run FastAPI app, you need an ASGI(Asynchronous Server Gateway Interface) server called uvicorn
  pip3 install uvicorn
+
+UVIVORN
+*Uvicorn is an ASGI server used to run FastAPI applications.
+
+API ENDPOINT
+*An endpoint is a specific URL through which a client communicates with the server.
+
+
+HTTP STATUS CODES
+200 → OK
+201 → Created
+204 → No Content
+400 → Bad Request
+401 → Unauthorized
+403 → Forbidden
+404 → Not Found
+422 → Validation Error
+500 → Internal Server Error
+
 
 *hello world program
 *The first step in creating a FastAPI app is to declare the application object of FastAPI class.
